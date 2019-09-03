@@ -1,0 +1,56 @@
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  User1:
+    Type: 'AWS::IAM::User'
+    Properties:
+      LoginProfile:
+        Password: password1
+
+  User2:
+    Type: 'AWS::IAM::User'
+    Properties: 
+      LoginProfile:
+        Password: password2
+   
+
+  UserPolicies:
+    Type: 'AWS::IAM::Policy'
+    Description: policy to have s3 full access
+    Properties:
+      PolicyName: UsersPolicy
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action:
+              - 's3:*'
+            Resource: '*'
+      Users:
+        - !Ref User1
+        - !Ref User2
+    
+  User1Keys:
+    Type: 'AWS::IAM::AccessKey'
+    Properties:
+      UserName: !Ref User1
+  
+  User2Keys:
+    Type: 'AWS::IAM::AccessKey'
+    Properties:
+      Username: !Ref User2
+    
+Outputs:
+  AccessKeyUser1:
+    Value: !Ref User1Keys
+    Description: AWSAccessKeyId of users
+  SecretKeyUser1:
+    Value: !GetAtt [User1Keys, SecretAccessKey]
+    Description: AWSSecretAccessKey of new user
+    
+  AccessKeyUser2:
+    Value: !Ref User2Keys
+    Description: AWSAccessKeyId of users
+  SecretKeyUser2:
+    Value: !GetAtt [User2Keys, SecretAccessKey]
+    Description: AWSSecretAccessKey of new user
+
+  
